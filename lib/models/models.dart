@@ -11,8 +11,6 @@ class Series {
     this.id,
     this.name,
     this.averageRrating,
-    this.userRating,
-    this.summary,
     this.image,
     this.isFavourite = false,
   });
@@ -20,10 +18,10 @@ class Series {
   Series.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    averageRrating = convertToDouble(json['rating']['average']);
-    summary = json['summary'];
+    averageRrating = json['rating'] != null
+        ? convertToDouble(json['rating']['average'])
+        : null;
     image = json['image'] != null ? ModelImage.fromJson(json['image']) : null;
-    userRating = null;
     isFavourite = false;
   }
 
@@ -47,4 +45,14 @@ class ModelImage {
     medium = json['medium'];
     original = json['original'];
   }
+}
+
+class DataRequiredForBuild {
+  List<Series>? series;
+  List<Series>? favouriteSeries;
+
+  DataRequiredForBuild({
+    this.series,
+    this.favouriteSeries,
+  });
 }

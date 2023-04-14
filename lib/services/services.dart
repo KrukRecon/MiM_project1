@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../models/models.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,5 +17,27 @@ class ApiServices {
     } else {
       return null;
     }
+  }
+
+  Future<List<Series>?> getFavouriteSeries() async {
+    CollectionReference collectionRef =
+        FirebaseFirestore.instance.collection('favourite-series');
+    QuerySnapshot query = await collectionRef.get();
+    List<Map<String, dynamic>> favouriteSeriesFromDb = [];
+
+    for (var doc in query.docs) {
+      favouriteSeriesFromDb.add(doc.data() as Map<String, dynamic>);
+    }
+
+    return List<Series>.from(favouriteSeriesFromDb.map(
+      (e) => Series.fromJson(e),
+    ));
+  }
+
+  Future<DataRequiredForBuild> getDataRequiredForBuild() async {
+    return DataRequiredForBuild(
+      series: await getSeries(),
+      favouriteSeries: await getFavouriteSeries(),
+    );
   }
 }
